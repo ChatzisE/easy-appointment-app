@@ -214,14 +214,12 @@ export default {
       this.errorMessage = error;
     });
     try {
-      debugger;
-      await ajax.get("/api/organizations");
+      //await ajax.get("/api/organizations");
       await this.isValidated();
       await this.getServerList();
       await this.getAllApplicationList();
       await this.getAllCustomerList();
     } catch (e) {
-      debugger;
       return;
     }
   },
