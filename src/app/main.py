@@ -6,12 +6,12 @@ from fastapi.responses import FileResponse, PlainTextResponse
 import requests
 import json
 app = FastAPI()
-app.mount("/static", StaticFiles(directory=pkg_resources.resource_filename(__name__, 'static')), name="static")
-
-
-@app.get("/", include_in_schema=False)
-def root():
-    return FileResponse(pkg_resources.resource_filename(__name__, '/static/index.html'))
+# app.mount("/static", StaticFiles(directory=pkg_resources.resource_filename(__name__, 'static')), name="static")
+#
+#
+# @app.get("/", include_in_schema=False)
+# def root():
+#     return FileResponse(pkg_resources.resource_filename(__name__, '/static/index.html'))
 
 
 @app.get("/send-email", response_class=PlainTextResponse)
@@ -31,9 +31,9 @@ def send_mail():
     # extracting response text
     return r.text
 
-
-@app.get("/get-organizations")
+@app.get("/organizations")
 def get_organizations():
+    # todo save response to redis 
     request = "https://hr.apografi.gov.gr/api/public/organizations"
     response = requests.get(request)
     return json.loads(response.text)
