@@ -1,19 +1,31 @@
 from fastapi_users import FastAPIUsers, models
 
 class User(models.BaseUser):
-    pass
+    user_name: str
+    user_surname: str
+    is_client: bool
+    organization: int
 
 
 class UserCreate(User, models.BaseUserCreate):
-    pass
+    user_name: str
+    user_surname: str
+    is_client: bool
+    organization: int
 
 
 class UserUpdate(User, models.BaseUserUpdate):
-    pass
+    user_name: str
+    user_surname: str
+    is_client: bool
+    organization: int
 
 
 class UserDB(User, models.BaseUserDB):
-    pass
+    user_name: str
+    user_surname: str
+    is_client: bool
+    organization: int
 
 
 

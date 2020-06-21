@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table,
+from sqlalchemy import (Column, DateTime, Integer, MetaData, String, Table,Boolean,
                         create_engine)
 from sqlalchemy.sql import func
 from databases import Database
@@ -36,7 +36,10 @@ Base: DeclarativeMeta = declarative_base()
 
 
 class UserTable(Base, SQLAlchemyBaseUserTable):
-    pass
+    user_name = Column(String,nullable=False)
+    user_surname = Column(String, nullable=False)
+    is_client = Column(Boolean, default=True, nullable=False)
+    organization = Column(Integer,nullable=True)
 
 Base.metadata.create_all(engine)
 

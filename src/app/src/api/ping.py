@@ -20,4 +20,4 @@ router = APIRouter()
 
 @router.get("/ping")
 async def pong(user: user_db = Depends(fastapi_users.authenticator.get_current_active_user)):
-    return {"ping": "pong!"}
+    return user
