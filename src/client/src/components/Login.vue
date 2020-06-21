@@ -42,7 +42,7 @@
                 <v-col class="d-flex" cols="12" sm="6" xsm="12"></v-col>
                 <v-spacer></v-spacer>
                 <v-col class="d-flex" cols="12" sm="3" xsm="12" align-end>
-                  <v-btn x-large block :disabled="!valid" color="success" @click="validate">Login</v-btn>
+                  <v-btn x-large block :disabled="!valid" color="success" @click="login">Login</v-btn>
                 </v-col>
               </v-row>
             </v-form>
@@ -93,7 +93,7 @@
                     block
                     v-model="verify"
                     :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                    :rules="[rules.required, passwordMatch]"
+                    :rules="[rules.required]"
                     :type="show1 ? 'text' : 'password'"
                     name="input-10-1"
                     label="Confirm Password"
@@ -101,12 +101,23 @@
                     @click:append="show1 = !show1"
                   ></v-text-field>
                 </v-col>
-                <v-col cols="12">
-                  <v-switch v-model="clientFlag" :label="((clientFlag) ? 'Client' : 'Civil Servicer')"></v-switch>
+                <v-col cols="6">
+                  <v-switch
+                    v-model="clientFlag"
+                    :label="((clientFlag) ? 'Client' : 'Civil Servicer')"
+                  ></v-switch>
+                <!-- <v-col v-show="!clientFlag" cols="6">
+                  <v-combobox
+                    v-model="civilService"
+                    :items="organizations.data"
+                     item-text="preferredLabel"
+                     item-value="code"
+                    label="Choose your organization"
+                  ></v-combobox> -->
                 </v-col>
                 <v-spacer></v-spacer>
                 <v-col class="d-flex ml-auto" cols="12" sm="3" xsm="12">
-                  <v-btn x-large block :disabled="!valid" color="success" @click="validate">Register</v-btn>
+                  <v-btn x-large block :disabled="!valid" color="success" @click="login">Register</v-btn>
                 </v-col>
               </v-row>
             </v-form>
@@ -119,12 +130,7 @@
 <script>
 import ajax from "../services/ajaxCall";
 export default {
-  props: [
-    "applicationList",
-    "customerDetail",
-    "customerApplications",
-    "customerList"
-  ],
+  props: ['organizations'],
   data: () => ({
     dialog: true,
     tab: 0,
@@ -176,7 +182,9 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    debugger
+  },
   async mounted() {},
   computed: {}
 };

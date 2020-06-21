@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app v-if="initialize" id="inspire">
     <v-navigation-drawer v-model="drawer" :clipped="$vuetify.breakpoint.lgAndUp" app>
       <v-list dense>
         <template v-for="item in items">
@@ -117,6 +117,7 @@ export default {
     source: String
   },
   data: () => ({
+    initialize: false,
     loginDialog: false,
     dialog: false,
     drawer: false,
@@ -129,6 +130,7 @@ export default {
     applicationList: [],
     customerList: [],
     user: {},
+    organizations:[],
     items: [
       { id: "serverlist", icon: "mdi-server-network", text: "Server List" },
       { id: "loglist", icon: "mdi-math-log", text: "Logs" }
@@ -222,6 +224,10 @@ export default {
     } catch (e) {
       return;
     }
+  },
+  async created() {
+    this.organizations =  await ajax.get("/api/organizations");
+    this.initialize = true;
   },
   components: {
     ServerComponent,
