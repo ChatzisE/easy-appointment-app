@@ -12,6 +12,10 @@ from src.api.models import User, UserCreate, UserUpdate, UserDB
 from starlette.requests import Request
 import requests
 import json
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import pkg_resources
+from fastapi.responses import FileResponse, PlainTextResponse
 
 metadata.create_all(engine)
 
@@ -20,7 +24,18 @@ auth_backends = [
 ]
 
 app = FastAPI()
+origins = [
+    "http://localhost",
+    "http://localhost:8080",
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 fastapi_users = FastAPIUsers(
     user_db, auth_backends, User, UserCreate, UserUpdate, UserDB, SECRET,
 )
@@ -62,16 +77,17 @@ def on_after_forgot_password(user: User, token: str, request: Request):
     print(f"User {user.id} has forgot their password. Reset token: {token}")
 
 
-@app.get("/")
-async def root():
-    if r.exists('visits') == 1:
-        visits = r.get("visits")
-        print("Read {} visits".format(visits))
-    else:
-        visits = 0
-    print("Save {} visits".format(int(visits) + 1))
-    r.set("visits", int(visits) + 1)
-    return {"message": "Hello World, visits {}".format(str(visits))}
+
+# @app.get("/")
+# async def root():
+#     if r.exists('visits') == 1:
+#         visits = r.get("visits")
+#         print("Read {} visits".format(visits))
+#     else:
+#         visits = 0
+#     print("Save {} visits".format(int(visits) + 1))
+#     r.set("visits", int(visits) + 1)
+#     return {"message": "Hello World, visits {}".format(str(visits))}
 
 
 @app.get("/organizations/{reload}/")
