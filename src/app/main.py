@@ -2,7 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 import redis
 import os
-from src.api import ping, notes
+from src.api import appointment
 from src.db import engine, metadata, database
 from fastapi_users.authentication import JWTAuthentication
 from settings import SECRET, REDIS_SERVER, REDIS_PASS
@@ -96,8 +96,7 @@ async def get_organizations(reload: bool):
     return json.loads(org)
 
 
-app.include_router(ping.router)
-app.include_router(notes.router, prefix="/notes", tags=["notes"])
+app.include_router(appointment.router, prefix="/appointment", tags=["appointment"])
 if __name__ == "__main__":
     fetch_organizations(True)
     uvicorn.run(app, host="0.0.0.0", port=8000)

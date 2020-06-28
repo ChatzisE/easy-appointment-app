@@ -21,6 +21,6 @@ RUN chown -R appuser:appuser /app
 USER appuser:appuser
 ENV PATH=$PATH:/app/.local/bin
 RUN pip install -r requirements.txt
-
+EXPOSE 8000
 # Tell what to do when it starts as a container
 CMD ["uvicorn","main:app","--host","0.0.0.0","--port","8000"]

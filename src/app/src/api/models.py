@@ -1,4 +1,7 @@
 from fastapi_users import FastAPIUsers, models
+from datetime import datetime
+from pydantic import BaseModel
+
 
 class User(models.BaseUser):
     user_name: str
@@ -28,4 +31,15 @@ class UserDB(User, models.BaseUserDB):
     organization: int
 
 
+class Appointment(BaseModel):
+    user_id: str
+    org_code: int
+    org_name: str
+    appointment_datetime: str
 
+
+class Approval(BaseModel):
+    org_code: int
+    appointment_id: str
+    appointment_datetime: datetime 
+    user_id: str
