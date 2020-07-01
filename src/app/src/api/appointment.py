@@ -4,6 +4,7 @@ from fastapi_users.authentication import JWTAuthentication
 from settings import SECRET
 from src.api.models import User, UserCreate, UserUpdate, UserDB, Appointment, Approval
 from src.db import user_db
+from src.api import crud
 from fastapi import Body, Depends, HTTPException
 import requests
 import os
@@ -28,7 +29,7 @@ def dt_converter(o):
 @router.get("/")
 async def get_appointments(user: user_db = Depends(fastapi_users.authenticator.get_current_active_user)):
     response = None
-    if (user.is_client):
+    if user.is_client:
         response = requests.get("http://appointment-api:9000/appointment/appoint/", params={"user_id": user.id})
     else:
         response = requests.get("http://appointment-api:9000/appointment/backoffice/",
@@ -51,18 +52,29 @@ async def new_appointment(appointment: Appointment):
 
 @router.put("/")
 async def approve_appointment(approval: Approval):
-    response = requests.put(
-        "http://appointment-api:9000/appointment/backoffice/approve",
-        data=json.dumps(approval))
-    # --todo send email, get user info from database
-    mail_request = {
-        'email': "tzisxa1@gmail.com",
-        'userName': "Edwina",
-        'userSurname': "Nakos",
-        'appointmentDate': approval.appointment_datetime,
-        "appointmentPlace": json.loads(response.text).org_name
-    }
-    mail_response = requests.post(
-        "http://mail-notifier:5000/MailNotifier",
-        data=json.dumps(mail_request))
+    try:
+        response = requests.put(
+            "http://appointment-api:9000/appointment/backoffice/approve",
+            data=json.dumps(dict(approval)))
+        approved_appointment = json.loads(response.text)
+        user = await crud.fetch_specific_user(approved_appointment.get('user_id'))
+        mail_request = {
+            'email': user._row.get('email'),
+            'userName': user._row.get('user_name'),
+            'userSurname': user._row.get('user_surname'),
+            'appointmentDate': approval.appointment_datetime,
+            "appointmentPlace": approved_appointment.get('org_name')
+        }
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        mail_response = requests.post(
+            "http://mail-notifier:5000/MailNotifier",
+            headers=headers,
+            data=json.dumps(mail_request))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    print(mail_response)
+    if mail_response.status_code != 200:
+        raise HTTPException(status_code=mail_response.status_code, detail=mail_response.reason)
     return response.text

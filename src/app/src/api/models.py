@@ -40,6 +40,6 @@ class Appointment(BaseModel):
 
 class Approval(BaseModel):
     org_code: int
-    appointment_id: str
-    appointment_datetime: datetime 
+    appointment_id: int
+    appointment_datetime: str
     user_id: str
