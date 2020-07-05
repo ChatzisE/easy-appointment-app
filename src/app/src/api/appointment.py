@@ -28,14 +28,11 @@ def dt_converter(o):
 
 @router.get("/")
 async def get_appointments(user: user_db = Depends(fastapi_users.authenticator.get_current_active_user)):
-    response = None
     if user.is_client:
-        response = requests.get("http://appointment-api:9000/appointment/appoint/", params={"user_id": user.id})
+        response = requests.get("http://appointment-api:9000/appointment/appoint/"+user.id)
     else:
-        response = requests.get("http://appointment-api:9000/appointment/backoffice/",
-                                params={"org_code": str(user.organization)})
-        appointments = response.text
-    return appointments
+        response = requests.get("http://appointment-api:9000/appointment/backoffice/"+str(user.organization))
+    return response.text
 
 
 @router.post("/")
