@@ -41,7 +41,7 @@ fastapi_users = FastAPIUsers(
 )
 
 app.include_router(fastapi_users.router, prefix="/users", tags=["users"])
-
+app.include_router(appointment.router, prefix="/appointment", tags=["appointment"])
 r = redis.StrictRedis(host=REDIS_SERVER, port=6379,
                       password=REDIS_PASS, charset="utf-8", decode_responses=True)
 
@@ -78,25 +78,18 @@ def on_after_forgot_password(user: User, token: str, request: Request):
 
 
 
-# @app.get("/")
-# async def root():
-#     if r.exists('visits') == 1:
-#         visits = r.get("visits")
-#         print("Read {} visits".format(visits))
-#     else:
-#         visits = 0
-#     print("Save {} visits".format(int(visits) + 1))
-#     r.set("visits", int(visits) + 1)
-#     return {"message": "Hello World, visits {}".format(str(visits))}
+app.mount("/static", StaticFiles(directory=pkg_resources.resource_filename(__name__, 'static')), name="static")
 
+
+@app.get("/", include_in_schema=False)
+def root():
+    return FileResponse(pkg_resources.resource_filename(__name__, '/static/index.html'))
 
 @app.get("/organizations/{reload}/")
 async def get_organizations(reload: bool):
     org = fetch_organizations(reload)
     return json.loads(org)
 
-
-app.include_router(appointment.router, prefix="/appointment", tags=["appointment"])
 if __name__ == "__main__":
     fetch_organizations(True)
     uvicorn.run(app, host="0.0.0.0", port=8000)
